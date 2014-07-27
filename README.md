@@ -35,8 +35,8 @@ updating, etc.
 <a name="pkgngfmt"></a>
 ### pkgng package format
 
-pkgng package format is a tar archive which can be raw, or use the following
-compression: gz, bzip2 and xz, defaulting in xz format.
+pkgng package format is a tar archive which can be raw, or use one of the
+following compression formats: gz, bzip2, or xz (default).
 
 The tar itself is composed in two types of elements:
 
@@ -104,9 +104,10 @@ Valid scripts are:
 * post-upgrade
 * upgrade
 
-Script *MUST* be in sh format nothing else would work. shebang is not necessary.
+Each script *MUST* be in POSIX shell format (/bin/sh). The shebang line is
+optional.
 
-When the manifest is read by pkg\_create files and dirs accept another format:
+The pkg-create(8) utility accepts multiple formats for `files` and `dirs`:
 
 	files:
 	  /usr/local/bin/foo, 'sha256sum'
@@ -115,20 +116,21 @@ When the manifest is read by pkg\_create files and dirs accept another format:
 	- /usr/local/share/foo-1.0
 	- /path/to/directory: {uname: foouser, gname: foogroup, perm: 0755}
 
-This allows to override the users, groups and mode of files and directories during package
-creation, like for example this allows to create a package
-containing root files without being packaged by the root user.
+This allows the package creator to override the user, group, and mode of any
+file or directories during package
+creation. For example, one could create a package containing root-owned files
+without being creating the package as the root user.
 
 ##### MTREE\_DIRS
 
-This is optional, this is used by the package the same way it is done by the
-legacy tools which means the MTREE is extracted in prefix before each
+This file is optional, and is used by the package the same way the legacy
+tools do, which means the MTREE is extracted in the package prefix before each
 installation.
 
-In the future we hope that mtree will be deprecated in favour of a hier package
-or in single MTREE that won't be customisable in per package basis and because
-pkgng supports packing of empty directories, per package MTREE makes no sense
-any more.
+In the future we hope that `mtree` will be deprecated in favour of a `hier`
+package or a single MTREE that won't be customisable on a per-package basis.
+A per-package MTREE makes no sense any more, because pkgng supports packing
+empty directories.
 
 <a name="localdb"></a>
 ### Local database
@@ -136,9 +138,10 @@ any more.
 Once a package is installed, it is registered to a SQLite database.
 
 The SQLite database allow fast queries and ACID transactions.
-It also allow to query the reverse dependencies without a __+REQUIRED_BY__ hack.
+It also allows the user to query a package's reverse dependencies without
+needing a __+REQUIRED_BY__ hack.
 
-In order to save space the MTREE is only stored once, which save 18K per
+In order to save space the MTREE is only stored once, which saves 18K per
 installed package.
 
 pkgng supports a `register` command to register packages into the SQLite
@@ -152,7 +155,7 @@ show pkg-message, ...
 remote FTP/HTTP server.
 
 If only a package name is given, it will search the repository catalogue
-and download and install the package if it exists. The dependencies will be
+and download and install the package if it exists. Any dependencies will be
 downloaded and installed first.
 
 This is possible because we have the dependency information in the
@@ -188,7 +191,7 @@ latest release version:
 ### A quick usage introduction to pkgng
 
 In this section of the document we will try to give a quick and dirty introduction
-on the practical usage of pkgng - installing packages, searching in remote package
+to the practical usage of pkgng - installing packages, searching in remote package
 repositories, updating remote package repositories and installing from them, etc.
 
 <a name="installpkgng"></a>
